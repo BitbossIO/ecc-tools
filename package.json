@@ -2,7 +2,7 @@
   "name": "ecc-tools",
   "version": "1.0.0",
   "description": "Tools and helpers for working with Elliptical curve cryptography (ECC)",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
     "test": "mocha",
     "prepublish": "coffee -o lib -c src/*.coffee"
