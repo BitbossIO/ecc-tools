@@ -1,0 +1,35 @@
+{
+  "name": "ecc-tools",
+  "version": "1.0.0",
+  "description": "Tools and helpers for working with Elliptical curve cryptography (ECC)",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha",
+    "prepublish": "coffee -o lib -c src/*.coffee"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BitbossIO/ecc-tools.git"
+  },
+  "keywords": [
+    "ecc"
+  ],
+  "author": "joshr@bitboss.io",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BitbossIO/ecc-tools/issues"
+  },
+  "homepage": "https://github.com/BitbossIO/ecc-tools#readme",
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "coffee-script": "^1.10.0",
+    "mocha": "^3.0.0"
+  },
+  "dependencies": {
+    "bs58check": "^1.0.8",
+    "es6-promise": "^3.2.1",
+    "json-stable-stringify": "^1.0.1",
+    "secp256k1": "^3.1.0",
+    "triplesec": "^3.0.25"
+  }
+}
