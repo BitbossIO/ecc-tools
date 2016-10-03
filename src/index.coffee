@@ -59,9 +59,9 @@ ecctoolkit =
     secp256k1.signatureExport(sig)
 
   verify: (msg, publicKey, sig) ->
-    msg = Buffer.from(msg.toBuffer?() ? msg)
-    sig = Buffer.from(sig.toBuffer?() ? sig)
-    publicKey = Buffer.from(publicKey.toBuffer?() ? publicKey)
+    msg = new Buffer(msg.toBuffer?() ? msg)
+    sig = new Buffer(sig.toBuffer?() ? sig)
+    publicKey = new Buffer(publicKey.toBuffer?() ? publicKey)
     assert(msg.length > 0, "Message should not be empty")
     assert(msg.length <= 32, "Message is too long")
     sig = secp256k1.signatureImport(sig)
