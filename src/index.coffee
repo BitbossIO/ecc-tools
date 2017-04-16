@@ -36,12 +36,24 @@ ecctoolkit =
   bs58check: bs58check
   secp256k1: secp256k1
 
+  encode: bs58check.encode
+  decode: bs58check.decode
+
+  rmd160: (msg) -> crypto.createHash("rmd160").update(msg).digest()
   sha256: (msg) -> crypto.createHash("sha256").update(msg).digest()
   sha512: (msg) -> crypto.createHash("sha512").update(msg).digest()
 
+  hash: (msg, alg='sha256') ->
+    algs =
+      rmd160: @rmd160
+      sha256: @sha256
+      sha512: @sha512
+    if msg? then algs[alg](msg)
+    else algs
+
   hmacSha256: (key, msg) -> crypto.createHmac("sha256", key).update(msg).digest()
 
-  checksum: (msg) -> @sha256(stringify(msg))
+  checksum: (msg, alg) -> @hash(stringify(msg), alg)
 
   privateKey: ->  crypto.randomBytes(32)
   publicKey: (privateKey, compressed=false) -> secp256k1.publicKeyCreate(privateKey, compressed)
