@@ -10,6 +10,6 @@
 export as namespace ecctoolkit;
 
 export function privateKey(): any;
-export function publicKey(privateKey: string, useCompressedKeys: boolean): string;
+export function publicKey(privateKey: Buffer, useCompressedKeys: boolean): Buffer;
 export function decrypt(cipher: string, privateKey: string, algorithm: string): any; // change to Promise?
 export function encrypt(plaintext: string, publicKey: string, algorithm: string): any; // change to Promise?
