@@ -42,6 +42,10 @@ ecctoolkit =
   rmd160: (msg) -> crypto.createHash("rmd160").update(msg).digest()
   sha256: (msg) -> crypto.createHash("sha256").update(msg).digest()
   sha512: (msg) -> crypto.createHash("sha512").update(msg).digest()
+  ripemd160: (msg) -> crypto.createHash("ripemd160").update(msg).digest()
+
+  sha256ripemd160: (msg) -> ecctoolkit.ripemd160(sha256(msg))
+  sha256sha256: (msg) -> ecctoolkit.sha256(ecctoolkit.sha256(msg))
 
   hash: (msg, alg='sha256') ->
     algs =
