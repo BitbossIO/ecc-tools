@@ -27,7 +27,6 @@
     "mocha": "^3.0.0"
   },
   "dependencies": {
-    "bs58check": "^1.0.8",
     "es6-promise": "^3.2.1",
     "json-stable-stringify": "^1.0.1",
     "secp256k1": "^3.1.0",
