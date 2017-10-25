@@ -9,6 +9,7 @@ promise = Promise ? require('es6-promise').Promise
 
 crypto = require 'crypto'
 secp256k1 = require 'secp256k1'
+bs58check = require 'bs58check'
 triplesec = require 'triplesec'
 
 stringify = require 'json-stable-stringify'
@@ -32,7 +33,11 @@ pad32 = (msg) ->
 
 ecctoolkit =
   stringify: stringify
+  bs58check: bs58check
   secp256k1: secp256k1
+
+  encode: bs58check.encode
+  decode: bs58check.decode
 
   rmd160: (msg) -> crypto.createHash("rmd160").update(msg).digest()
   sha256: (msg) -> crypto.createHash("sha256").update(msg).digest()
