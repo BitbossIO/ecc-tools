@@ -160,5 +160,12 @@ ecctoolkit =
 
     .then (plaintext) -> JSON.parse(plaintext)
 
+  reverse: (buf) ->
+    if (typeof buf is 'string') then buf = new Buffer(buf, 'hex')
+    tmp = new Buffer(buf.length)
+    for b, i in buf
+      tmp[buf.length-1-i] = b
+    tmp
+
 
 module.exports = ecctoolkit
