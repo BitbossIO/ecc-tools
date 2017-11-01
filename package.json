@@ -1,6 +1,6 @@
 {
   "name": "ecc-tools",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "Tools and helpers for working with Elliptical curve cryptography (ECC)",
   "main": "lib/index.js",
   "types": "index.d.ts",
