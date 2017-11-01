@@ -33,6 +33,43 @@ describe 'ECC Tools', ->
         result = ecc.checksum(a: 0, b: 1).toString('hex')
         expect(result).to.equal('f4c1d8bd90d7ccd720aa5a69a67185fb9caf4f35926a4eacf53a86d0e70bdf88')
 
+  describe 'Encoding/Decoding', ->
+    describe 'isHex', ->
+      it 'should return true if string is hex', ->
+        result = ecc.isHex('b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9')
+        expect(result).to.be.true
+
+      it 'should return false if string is not hex', ->
+        result = ecc.isHex('1Yu2BuptuZSiBWfr2Qy4aic6qEVnwPWrdkHPEc')
+        expect(result).to.be.false
+
+    describe 'isBase58', ->
+      it 'should return true if string is Base58', ->
+        result = ecc.isBase58('1Yu2BuptuZSiBWfr2Qy4aic6qEVnwPWrdkHPEc')
+        expect(result).to.be.true
+
+      it 'should return false if string is not Base58', ->
+        result = ecc.isBase58('b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9')
+        expect(result).to.be.false
+
+    describe 'decode', ->
+      it 'should return a buffer if passed a buffer', ->
+        result = ecc.decode(@alicePublicKey)
+        expect(result).to.be.an.instanceof(Buffer)
+
+      it 'should return a buffer if passed a Base58 encoded string', ->
+        result = ecc.decode('5Kd3NBUAdUnhyzenEwVLy9pBKxSwXvE9FMPyR4UKZvpe6E3AgLr')
+        expect(result).to.be.an.instanceof(Buffer)
+
+      it 'should return a buffer if passed a hex encoded string', ->
+        result = ecc.decode('b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9')
+        expect(result).to.be.an.instanceof(Buffer)
+
+      it 'should return a buffer if passed a hex encoded string that looks like a base58 encoded string', ->
+        result = ecc.decode('ffffffffffffffff')
+        expect(result).to.be.an.instanceof(Buffer)
+        expect(result).to.eql(new Buffer('ffffffffffffffff', 'hex'))
+
   describe 'Keys', ->
     describe 'privateKey', ->
       it 'should generate a random 32byte private key', ->

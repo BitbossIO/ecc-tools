@@ -36,9 +36,6 @@ ecctoolkit =
   bs58check: bs58check
   secp256k1: secp256k1
 
-  encode: bs58check.encode
-  decode: bs58check.decode
-
   rmd160: (msg) -> crypto.createHash("rmd160").update(msg).digest()
   sha256: (msg) -> crypto.createHash("sha256").update(msg).digest()
   sha512: (msg) -> crypto.createHash("sha512").update(msg).digest()
@@ -58,6 +55,20 @@ ecctoolkit =
   hmacSha256: (key, msg) -> crypto.createHmac("sha256", key).update(msg).digest()
 
   checksum: (msg, alg) -> @hash(stringify(msg), alg)
+
+  isHex: (str) -> str.match(/^([0-9a-fA-F]{2})+$/)?
+
+  isBase58: (str) -> str.match(/^([1-9A-HJ-NP-Za-km-z])+$/)?
+
+  decode: (msg) ->
+    if (msg instanceof Buffer) then msg
+    else if (typeof msg is not 'string') then throw new Error('Must be a buffer or a string')
+    else if @isBase58(msg) && buf = bs58check.decodeUnsafe(msg) then buf
+    else if @isHex(msg) then new Buffer(msg, 'hex')
+    else throw new Error('Unable to decode')
+
+  encode: (msg) ->
+    bs58check.encode
 
   privateKey: ->  crypto.randomBytes(32)
   publicKey: (privateKey, compressed=false) -> secp256k1.publicKeyCreate(privateKey, compressed)
