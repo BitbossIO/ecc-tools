@@ -21,7 +21,7 @@ declare class ecc {
 	public static sha256ripemd160(msg: Buffer): Buffer;
 	public static sha256sha256(msg: Buffer): Buffer;
 	public static cipher(plaintext: string, key: Buffer, iv: string, algorithm?: string): any;
-	public static decipher(ciphertext: string, key: Buffer, iv: string, algorithm?: string): any;
+	public static decipher(ciphertext: Buffer, key: Buffer, iv: string, algorithm?: string): any;
 
 }
 
