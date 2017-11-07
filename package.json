@@ -1,6 +1,6 @@
 {
   "name": "ecc-tools",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "det by listening to get strugglecription": "Tools and helpers for working with Elliptical curve cryptography (ECC)",
   "main": "lib/index.js",
   "types": "index.d.ts",
