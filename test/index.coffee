@@ -34,6 +34,40 @@ describe 'ECC Tools', ->
         expect(result).to.equal('f4c1d8bd90d7ccd720aa5a69a67185fb9caf4f35926a4eacf53a86d0e70bdf88')
 
   describe 'Encoding/Decoding', ->
+    describe 'xor', ->
+      it 'should take two buffers and return the xor', ->
+        result = ecc.xor(new Buffer('0101', 'hex'), new Buffer('0101', 'hex'))
+        expect(result).to.eql(new Buffer('0000', 'hex'))
+        result = ecc.xor(new Buffer('0100', 'hex'), new Buffer('0101', 'hex'))
+        expect(result).to.eql(new Buffer('0001', 'hex'))
+
+    describe 'zip', ->
+      it 'should take two arrays of buffers and combine the buffer pairs', ->
+        chunks1 = ecc.chunk(new Buffer('EC00B99365A09B6E26C732378CD0C6257F7012BC', 'hex'), 5)
+        chunks2 = ecc.chunk(new Buffer('9365A09B6E26C732378CD0C6257F7012BC', 'hex'), 5)
+        result = ecc.zip(chunks1, chunks2)
+        expect(result[0]).to.eql(new Buffer('EC00B993659365A09B6E', 'hex'))
+        expect(result[1]).to.eql(new Buffer('A09B6E26C726C732378C', 'hex'))
+        expect(result[2]).to.eql(new Buffer('32378CD0C6D0C6257F70', 'hex'))
+        expect(result[3]).to.eql(new Buffer('257F7012BC12BC', 'hex'))
+
+    describe 'chunk', ->
+      it 'should take a buffer and break it into chunks', ->
+        result = ecc.chunk(new Buffer('EC00B99365A09B6E26C732378CD0C6257F7012BC', 'hex'), 5)
+        expect(result[0]).to.eql(new Buffer('EC00B99365', 'hex'))
+        expect(result[1]).to.eql(new Buffer('A09B6E26C7', 'hex'))
+        expect(result[2]).to.eql(new Buffer('32378CD0C6', 'hex'))
+        expect(result[3]).to.eql(new Buffer('257F7012BC', 'hex'))
+
+      it 'should leave the remainder in the last chunk', ->
+        result = ecc.chunk(new Buffer('EC00B99365A09B6E26C732378CD0C6257F7012BC', 'hex'), 6)
+        expect(result[3]).to.eql(new Buffer('12bc', 'hex'))
+
+    describe 'combine', ->
+      it 'should take two buffers and return the combination', ->
+        result = ecc.combine(new Buffer('EC00B99365A09B6E26C732378CD0C6257F7012BC', 'hex'), new Buffer('00AFEA21', 'hex'))
+        expect(result).to.eql(new Buffer('00EC00B99365AFA09B6E26C7EA32378CD0C621257F7012BC', 'hex'))
+
     describe 'isHex', ->
       it 'should return true if string is hex', ->
         result = ecc.isHex('b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9')
@@ -52,6 +86,15 @@ describe 'ECC Tools', ->
         result = ecc.isBase58('b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9')
         expect(result).to.be.false
 
+    describe 'encode', ->
+      it 'should return a string if passed a buffer', ->
+        result = ecc.encode(new Buffer('deadbeef','hex'))
+        expect(typeof result).to.equal('string')
+
+      it 'should return a buffer if passed a Base58 encoded string', ->
+        result = ecc.encode(new Buffer('00EC00B99365AFA09B6E26C7EA32378CD0C621257F7012BC','hex'), new Buffer('953ABC69', 'hex'))
+        expect(result).to.equal('1Yu2BuptuZSiBWfr2Qy4aic6qEVnwPWrdkHPEc')
+
     describe 'decode', ->
       it 'should return a buffer if passed a buffer', ->
         result = ecc.decode(@alicePublicKey)
@@ -69,6 +112,19 @@ describe 'ECC Tools', ->
         result = ecc.decode('ffffffffffffffff')
         expect(result).to.be.an.instanceof(Buffer)
         expect(result).to.eql(new Buffer('ffffffffffffffff', 'hex'))
+
+    describe 'address', ->
+      it 'should return an encoded address', ->
+        key = new Buffer('0284E5235E299AF81EBE1653AC5F06B60E13A3A81F918018CBD10CE695095B3E24','hex')
+        version = new Buffer('00AFEA21','hex')
+        mask = new Buffer('953ABC69','hex')
+        result = ecc.address(key, version, mask)
+        expect(result).to.equal('1Yu2BuptuZSiBWfr2Qy4aic6qEVnwPWrdkHPEc')
+
+      it 'should return a buffer if passed a Base58 encoded string', ->
+        result = ecc.encode(new Buffer('00EC00B99365AFA09B6E26C7EA32378CD0C621257F7012BC','hex'), new Buffer('953ABC69', 'hex'))
+        expect(result).to.equal('1Yu2BuptuZSiBWfr2Qy4aic6qEVnwPWrdkHPEc')
+
 
   describe 'Keys', ->
     describe 'privateKey', ->

@@ -9,8 +9,10 @@ promise = Promise ? require('es6-promise').Promise
 
 crypto = require 'crypto'
 secp256k1 = require 'secp256k1'
-bs58check = require 'bs58check'
 triplesec = require 'triplesec'
+
+bs58check = require 'bs58check'
+bs58 = require 'bs58'
 
 stringify = require 'json-stable-stringify'
 
@@ -56,19 +58,38 @@ ecctoolkit =
 
   checksum: (msg, alg) -> @hash(stringify(msg), alg)
 
+  xor: (a, b, len=Math.max(a.length, b.length)) ->
+    tmp = new Buffer(len)
+    tmp[i] = a[i] ^ b[i] for i in [0...len]
+    tmp
+
+  zip: (a, b) -> Buffer.concat([a[i],b[i]].filter((e)->e?)) for i in [0...(Math.max(a.length, b.length))]
+
+  chunk: (buf, size) -> buf.slice((size*i), (size*i)+size) for i in [0...(buf.length/size)]
+
+  combine: (key, version) -> Buffer.concat @zip(@chunk(version,1),@chunk(key,Math.floor(key.length/version.length)))
+
   isHex: (str) -> str.match(/^([0-9a-fA-F]{2})+$/)?
 
   isBase58: (str) -> str.match(/^([1-9A-HJ-NP-Za-km-z])+$/)?
 
-  decode: (msg) ->
+  decode58check: (str, mask=(new Buffer(0))) ->
+    msg = bs58.decode(str)
+    payload = msg.slice(0, -4)
+    payload if msg.slice(-4).equals(@xor(@sha256sha256(payload), mask, 4))
+
+  decode: (msg, mask) ->
     if (msg instanceof Buffer) then msg
     else if (typeof msg is not 'string') then throw new Error('Must be a buffer or a string')
-    else if @isBase58(msg) && buf = bs58check.decodeUnsafe(msg) then buf
+    else if @isBase58(msg) && buf = @decode58check(msg, mask) then buf
     else if @isHex(msg) then new Buffer(msg, 'hex')
     else throw new Error('Unable to decode')
 
-  encode: (msg) ->
-    bs58check.encode
+  encode: (msg, mask=(new Buffer(0))) ->
+    checksum = @xor(@sha256sha256(msg), mask, 4)
+    bs58.encode Buffer.concat([msg, checksum], msg.length+4)
+
+  address: (key, version, mask) -> @encode(@combine(@sha256ripemd160(key), version), mask)
 
   privateKey: ->  crypto.randomBytes(32)
   publicKey: (privateKey, compressed=false) -> secp256k1.publicKeyCreate(privateKey, compressed)
